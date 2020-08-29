@@ -9,6 +9,7 @@ const FlatListBase = React.memo(({data, renderItem}) => {
       data={data}
       renderItem={renderItem}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
+      windowSize={18}
     />
   );
 });

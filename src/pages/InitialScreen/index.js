@@ -1,55 +1,80 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
-import SubHeader from '../../components/Subheader';
-import FlatList from '../../components/Flatlist';
+import {View, Alert} from 'react-native';
+import AlertData from '../../components/Alert';
 import Spinner from 'react-native-loading-spinner-overlay';
 import _ from 'lodash';
 import {connect} from 'react-redux';
+import SubHeader from '../../components/Subheader';
+import FlatList from '../../components/Flatlist';
+import FlatListItem from '../../components/FlatlistItem';
 import Action from '../../store/actions';
+import {treatRequestErrors} from '../../utils/ResponseErrors';
 
 const InitialScreen = (props) => {
-  const [loading, setLoading] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
-
+  const [alert, setAlert] = useState({show: false, title: '', message: ''});
   const dataServer = props.data ? props.data.posts : null;
-
   useEffect(() => {
     const request = () => {
-      setLoading(true);
-      try {
-        props.fetchData();
-        setLoading(false);
-      } catch (e) {
-        setLoading(false);
-        Alert.alert(
-          'Houve algum problema na conexão com o servidor, verifique se você possui internet',
-        );
+      props.fetchData();
+      const errors = treatRequestErrors(props.data);
+      if (errors) {
+        console.log('GABRIEL ENTROU');
+        setAlert((alert) => ({
+          ...alert,
+          show: true,
+          title: errors.title,
+          message: errors.message,
+        }));
       }
     };
     request();
   }, []);
   const renderItem = ({item, index}) => {
-    return (
-      <View style={styles.item}>
-        <Text style={styles.text}>
-          {item.resource.updated_at}
-          {'\n'}
-          {item.resource.resource_id}
-          {'\n'}
-          {item.resource.value}
-        </Text>
-      </View>
-    );
+    return <FlatListItem item={item} index={index} />;
   };
 
-  const onFilter = (filterValue, filterType) => {
-    const filterData = dataServer.filter(
-      (value, index) => value.resource[filterType] === filterValue,
-    );
+  const onFilter = (filterValue) => {
+    setAlert((alert) => ({
+      ...alert,
+      show: false,
+    }));
+    const {language_id, module_id} = filterValue;
+    const filterData = dataServer.filter((value, index) => {
+      if (language_id && module_id) {
+        return (
+          value.resource.language_id === language_id &&
+          value.resource.module_id === module_id
+        );
+      }
+      if (language_id) {
+        return value.resource.language_id === language_id;
+      }
+      if (module_id) {
+        return value.resource.module_id === module_id;
+      }
+    });
+    if (_.isEmpty(filterData)) {
+      setAlert((alert) => ({
+        ...alert,
+        show: true,
+      }));
+    }
     setFilteredData(filterData);
   };
   return (
     <View>
+      <AlertData
+        show={alert.show}
+        title={alert.title}
+        message={alert.message}
+        hideAlert={() => {
+          setAlert((alert) => ({
+            ...alert,
+            show: false,
+          }));
+        }}
+      />
       <SubHeader
         data={dataServer}
         onFilter={onFilter}
@@ -76,25 +101,7 @@ const InitialScreen = (props) => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 30,
-  },
-  item: {
-    padding: 10,
-  },
-  separator: {
-    height: 0.5,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
-  text: {
-    fontSize: 15,
-    color: 'black',
-  },
-});
+
 const mapStateToProps = (state) => ({
   data: state.data,
 });

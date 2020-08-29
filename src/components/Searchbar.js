@@ -19,7 +19,6 @@ const Searchbar = (props) => {
         onChangeText={(text) => {
           props.onSearch(text);
         }}
-        onPress={() => props.onPress()}
         onPressCancel={() => {
           console.log('cancel');
         }}
