@@ -1,5 +1,4 @@
 const treatRequestErrors = (error) => {
-  console.log(error.response.status);
   if (error.message === 'Network Error') {
     return {
       title: 'Problemas de conexão',
@@ -10,7 +9,7 @@ const treatRequestErrors = (error) => {
     case 404:
       return {
         title: 'Serviço não encontrado',
-        message: 'Não foi possível localizar o serviço solicitado',
+        message: 'Não foi possível carregar os dados',
       };
   }
   return;

@@ -12,14 +12,31 @@ const data = (state = INITIAL_STATE, action) => {
       return action.data;
 
     case RECEIVE_ERROR:
-      console.log('GABRIEL ENTROU AQUI');
+      return action;
+
+    default:
+      return state;
+  }
+};
+
+const error = (state = '', action) => {
+  switch (action.type) {
+    case REQUEST_DATA:
+      return state;
+
+    case RECEIVE_DATA:
+      return state;
+
+    case RECEIVE_ERROR:
       return action.error;
 
     default:
       return state;
   }
 };
+
 const rootReducer = combineReducers({
   data,
+  error,
 });
 export default rootReducer;

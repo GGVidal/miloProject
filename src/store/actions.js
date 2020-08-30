@@ -7,7 +7,7 @@ let dataAction = {
     return (dispatch) => {
       dispatch({type: REQUEST_DATA});
       axios
-        .get('https://guarded-escarpment-87424.herokuapp.com/api/postss')
+        .get('https://guarded-escarpment-87424.herokuapp.com/api/posts')
         .then((response) =>
           dispatch({
             type: RECEIVE_DATA,

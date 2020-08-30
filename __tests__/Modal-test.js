@@ -4,7 +4,7 @@
 
 import 'react-native';
 import React from 'react';
-import App from '../src/App';
+import Modal from '../src/components/Modal';
 
 // Note: test renderer must be required after react-native.
 import Enzyme from 'enzyme';
@@ -13,8 +13,8 @@ import {shallow} from 'enzyme';
 
 Enzyme.configure({adapter: new Adapter()});
 
-describe('App', () => {
+describe('Modal', () => {
   it('renders', () => {
-    shallow(<App />);
+    shallow(<Modal />);
   });
 });

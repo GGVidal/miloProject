@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Alert} from 'react-native';
+import {View} from 'react-native';
 import AlertData from '../../components/Alert';
 import Spinner from 'react-native-loading-spinner-overlay';
 import _ from 'lodash';
@@ -17,9 +17,8 @@ const InitialScreen = (props) => {
   useEffect(() => {
     const request = () => {
       props.fetchData();
-      const errors = treatRequestErrors(props.data);
+      const errors = props.error ? treatRequestErrors(props.error) : null;
       if (errors) {
-        console.log('GABRIEL ENTROU');
         setAlert((alert) => ({
           ...alert,
           show: true,
@@ -58,6 +57,8 @@ const InitialScreen = (props) => {
       setAlert((alert) => ({
         ...alert,
         show: true,
+        title: 'Aviso',
+        message: 'Nenhum registro encontrado',
       }));
     }
     setFilteredData(filterData);
@@ -104,6 +105,7 @@ const InitialScreen = (props) => {
 
 const mapStateToProps = (state) => ({
   data: state.data,
+  error: state.error,
 });
 const mapDispatchToProps = (dispatch) => ({
   fetchData: () => dispatch(Action.fetchData()),
